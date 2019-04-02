@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "capella"
+		},
+		{
+			"name": "hardware",
+			"path": "capella/hardware"
+		},
+		{
+			"path": "capella/server"
+		}
+	]
+}
