@@ -1,16 +1,13 @@
 #include <Arduino.h>
-#include "ESP8266WiFi.h"
-#include "ESP8266HTTPClient.h"
+#include <ESP8266WiFi.h>
+#include <ESP8266HTTPClient.h>
 #include "ArduinoJson.h"
-#include "RestClient.h"
 
 int ANALOG_SENSOR = A0;
 int MOISTURE_MIN = 1024;
 int MOISTURE_MAX = 300;
 int PERCENT_MIN = 0;
 int PERCENT_MAX = 100;
-
-RestClient httpClient = RestClient(API_ROOT);
 
 void startSerial()
 {
@@ -57,10 +54,6 @@ int readMoistureLevel()
         PERCENT_MIN,
         PERCENT_MAX);
 
-    Serial.print("Mositure : ");
-    Serial.print(friendlyValue);
-    Serial.println("%");
-
     return friendlyValue;
 }
 
@@ -68,17 +61,34 @@ void loop()
 {
     float moistureLevel = readMoistureLevel();
 
-    StaticJsonDocument<200> doc;
-
-    JsonObject object = doc.to<JsonObject>();
+    StaticJsonDocument<200> object;
     object["name"] = PLANT_NAME;
     object["moisture"] = moistureLevel;
 
     String buffer;
     serializeJson(object, buffer);
+    Serial.println(buffer);
 
-    String response = "";
-    int statusCode = httpClient.post("/measurements", String(buffer).c_str(), &response);
-    Serial.println(statusCode + " " + response);
-    delay(1000);
+    if (WiFi.status() == WL_CONNECTED)
+    {
+
+        HTTPClient http;
+
+        http.begin(PATH);
+        http.addHeader("Content-Type", "application/json");
+
+        int httpCode = http.POST(buffer);
+        String payload = http.getString();
+
+        Serial.println(httpCode);
+        Serial.println(payload);
+
+        http.end();
+    }
+    else
+    {
+        Serial.println("Error in WiFi connection");
+    }
+
+    delay(60000);
 }
