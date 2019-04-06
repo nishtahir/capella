@@ -1,37 +1,84 @@
 #include <Arduino.h>
+#include "ESP8266WiFi.h"
+#include "ESP8266HTTPClient.h"
+#include "ArduinoJson.h"
+#include "RestClient.h"
 
-int analogSensorPin = A0;
+int ANALOG_SENSOR = A0;
+int MOISTURE_MIN = 1024;
+int MOISTURE_MAX = 300;
+int PERCENT_MIN = 0;
+int PERCENT_MAX = 100;
 
-int dryValue = 1024;
-int wetValue = 300;
-int friendlyDryValue = 0;
-int friendlyWetValue = 100;
+RestClient httpClient = RestClient(API_ROOT);
 
+void startSerial()
+{
+    Serial.begin(9600);
+    delay(100);
+    Serial.println("Starting Serial...");
+    Serial.println();
+    Serial.println();
+}
 
-int output_value;
+void startWifi()
+{
+    Serial.print("Connecting to SSID: ");
+    Serial.println(SSID_NAME);
+
+    WiFi.mode(WIFI_STA);
+    WiFi.begin(SSID_NAME, SSID_PASSWORD);
+
+    while (WiFi.status() != WL_CONNECTED)
+    {
+        delay(500);
+        Serial.print(".");
+    }
+
+    Serial.println();
+    Serial.println("WiFi connected");
+    Serial.println("IP address: ");
+    Serial.println(WiFi.localIP());
+}
 
 void setup()
 {
+    startSerial();
+    startWifi();
+}
 
-  Serial.begin(9600);
+int readMoistureLevel()
+{
+    int rawValue = analogRead(ANALOG_SENSOR);
+    int friendlyValue = map(
+        rawValue,
+        MOISTURE_MIN,
+        MOISTURE_MAX,
+        PERCENT_MIN,
+        PERCENT_MAX);
 
-  Serial.println("Reading From the Sensor ...");
+    Serial.print("Mositure : ");
+    Serial.print(friendlyValue);
+    Serial.println("%");
 
-  delay(2000);
+    return friendlyValue;
 }
 
 void loop()
 {
-  int rawValue = analogRead(A0);
-  output_value = analogRead(analogSensorPin);
+    float moistureLevel = readMoistureLevel();
 
-  int friendlyValue = map(rawValue, dryValue, wetValue, friendlyDryValue, friendlyWetValue);
+    StaticJsonDocument<200> doc;
 
-  Serial.print("Mositure : ");
+    JsonObject object = doc.to<JsonObject>();
+    object["name"] = PLANT_NAME;
+    object["moisture"] = moistureLevel;
 
-  Serial.print(friendlyValue);
+    String buffer;
+    serializeJson(object, buffer);
 
-  Serial.println("%");
-
-  delay(1000);
+    String response = "";
+    int statusCode = httpClient.post("/measurements", String(buffer).c_str(), &response);
+    Serial.println(statusCode + " " + response);
+    delay(1000);
 }

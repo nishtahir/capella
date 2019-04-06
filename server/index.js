@@ -1,24 +1,110 @@
-var sqlite3 = require('sqlite3').verbose();
-var db = new sqlite3.Database(':memory:');
+const express = require('express');
+var bodyParser = require('body-parser');
 
-function createDatabase() {
-    console.log("createDb chain");
-    db = new sqlite3.Database('chain.sqlite3', createTable);
+const app = express();
+const port = 3000;
+
+const db = require('./models');
+const sequelize = db.sequelize;
+const Measurement = db.measurement;
+const Plant = db.plant;
+
+async function connectToDatabase() {
+    await testConnection();
+    await createTables();
 }
 
 
-db.serialize(function () {
-    db.run("CREATE TABLE lorem (info TEXT)");
-
-    var stmt = db.prepare("INSERT INTO lorem VALUES (?)");
-    for (var i = 0; i < 10; i++) {
-        stmt.run("Ipsum " + i);
+async function testConnection() {
+    try {
+        await sequelize.authenticate();
+        console.log('Database connection established successfully.');
+    } catch (err) {
+        console.error('Unable to connect to the database:', err);
     }
-    stmt.finalize();
+}
 
-    db.each("SELECT rowid AS id, info FROM lorem", function (err, row) {
-        console.log(row.id + ": " + row.info);
-    });
+async function createTables() {
+    try {
+        await Measurement.sync();
+        await Plant.sync();
+
+        // Plant.create({name})
+    } catch (err) {
+        console.error('Unable to create tables', err);
+    }
+}
+
+app.use(bodyParser.urlencoded({
+    extended: true
+}));
+app.use(bodyParser.json());
+
+app.get('/plants/', async (req, res) => {
+    try {
+        let results = await Plant.findAll({
+            distinct: 'plant_name'
+        });
+        let prettyJson = JSON.stringify(results, null, 4);
+        res.send(prettyJson);
+    } catch (e) {
+        console.error(e);
+        res.send(e);
+    }
 });
 
-db.close();
+app.get('/plants/:name', async (req, res) => {
+    try {
+        let name = req.params.name.trim();
+        let plant = await Plant.findOne({
+            where: { name: name },
+        });
+        let results = await plant.getMeasurements({ order: [['createdAt', 'DESC']] });
+        let prettyJson = JSON.stringify(results, null, 4);
+        res.send(prettyJson);
+    } catch (e) {
+        console.error(e);
+        res.send(e);
+    }
+});
+
+app.post('/plants', async (req, res) => {
+    try {
+        let name = req.body.name.trim();
+        let plant = await Plant.create({ name: name });
+        let prettyJson = JSON.stringify(plant, null, 4);
+        res.send(prettyJson);
+    } catch (e) {
+        console.error(e);
+        res.send(e);
+    }
+});
+
+app.post('/measurements', async (req, res) => {
+    try {
+        let name = req.body.name.trim();
+        let moisture = req.body.moisture;
+
+        let plant = await Plant.findOne({ where: { name: name } });
+        let measurement = await plant.createMeasurement({
+            moisture: moisture
+        });
+        let prettyJson = JSON.stringify(measurement, null, 4);
+        res.send(prettyJson);
+    } catch (e) {
+        console.error(e);
+        res.send(e);
+    }
+
+});
+
+async function startApp() {
+    try {
+        await connectToDatabase();
+        app.listen(port, () => console.log(`Listening on port ${port}!`))
+    } catch (e) {
+        console.error('Unable to start server: ', e);
+    }
+}
+
+startApp();
