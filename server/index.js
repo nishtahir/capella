@@ -14,7 +14,6 @@ async function connectToDatabase() {
     await createTables();
 }
 
-
 async function testConnection() {
     try {
         await sequelize.authenticate();
@@ -28,8 +27,6 @@ async function createTables() {
     try {
         await Measurement.sync();
         await Plant.sync();
-
-        // Plant.create({name})
     } catch (err) {
         console.error('Unable to create tables', err);
     }
@@ -46,6 +43,8 @@ app.get('/plants/', async (req, res) => {
             distinct: 'plant_name'
         });
         let prettyJson = JSON.stringify(results, null, 4);
+
+        res.type('json');
         res.send(prettyJson);
     } catch (e) {
         console.error(e);
@@ -61,6 +60,8 @@ app.get('/plants/:name', async (req, res) => {
         });
         let results = await plant.getMeasurements({ order: [['createdAt', 'DESC']] });
         let prettyJson = JSON.stringify(results, null, 4);
+
+        res.type('json');
         res.send(prettyJson);
     } catch (e) {
         console.error(e);
@@ -73,6 +74,8 @@ app.post('/plants', async (req, res) => {
         let name = req.body.name.trim();
         let plant = await Plant.create({ name: name });
         let prettyJson = JSON.stringify(plant, null, 4);
+
+        res.type('json');
         res.send(prettyJson);
     } catch (e) {
         console.error(e);
@@ -90,6 +93,8 @@ app.post('/measurements', async (req, res) => {
             moisture: moisture
         });
         let prettyJson = JSON.stringify(measurement, null, 4);
+
+        res.type('json');
         res.send(prettyJson);
     } catch (e) {
         console.error(e);
