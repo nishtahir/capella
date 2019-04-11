@@ -42,10 +42,7 @@ app.get('/plants/', async (req, res) => {
         let results = await Plant.findAll({
             distinct: 'plant_name'
         });
-        let prettyJson = JSON.stringify(results, null, 4);
-
-        res.type('json');
-        res.send(prettyJson);
+        res.json(results);
     } catch (e) {
         console.error(e);
         res.send(e);
@@ -59,10 +56,7 @@ app.get('/plants/:name', async (req, res) => {
             where: { name: name },
         });
         let results = await plant.getMeasurements({ order: [['createdAt', 'DESC']] });
-        let prettyJson = JSON.stringify(results, null, 4);
-
-        res.type('json');
-        res.send(prettyJson);
+        res.json(results);
     } catch (e) {
         console.error(e);
         res.send(e);
@@ -73,10 +67,7 @@ app.post('/plants', async (req, res) => {
     try {
         let name = req.body.name.trim();
         let plant = await Plant.create({ name: name });
-        let prettyJson = JSON.stringify(plant, null, 4);
-
-        res.type('json');
-        res.send(prettyJson);
+        res.json(plant);
     } catch (e) {
         console.error(e);
         res.send(e);
@@ -92,10 +83,7 @@ app.post('/measurements', async (req, res) => {
         let measurement = await plant.createMeasurement({
             moisture: moisture
         });
-        let prettyJson = JSON.stringify(measurement, null, 4);
-
-        res.type('json');
-        res.send(prettyJson);
+        res.json(measurement);
     } catch (e) {
         console.error(e);
         res.send(e);
