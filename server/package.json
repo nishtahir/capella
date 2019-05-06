@@ -1,8 +1,12 @@
 {
   "name": "server",
   "version": "1.0.1",
-  "description": "",
+  "description": "House plant monitoring to keep our greens happy.",
   "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nishtahir/capella/tree/master/server"
+  },
   "scripts": {
     "start": "[[ ! $NODE_ENV ]] && NODE_ENV='production' && export NODE_ENV; node index.js"
   },
@@ -10,7 +14,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "express": "^4.16.4",
-    "sequelize": "^5.2.11",
+    "sequelize": "^5.8.5",
     "sqlite3": "^4.0.6"
   },
   "devDependencies": {
