@@ -39,10 +39,14 @@ app.use(bodyParser.json());
 
 app.get('/plants/', async (req, res) => {
     try {
+        let limit = parseInt(req.query.limit) || 10;
+        let offset = parseInt(req.query.offset) || 0;
+
         let results = await Plant.findAll({
             distinct: 'plant_name'
         });
-        res.json(results);
+
+        res.json({ limit: limit, offset: offset, data: results });
     } catch (e) {
         console.error(e);
         res.send(e);
@@ -51,12 +55,20 @@ app.get('/plants/', async (req, res) => {
 
 app.get('/plants/:name', async (req, res) => {
     try {
+        let limit = parseInt(req.query.limit) || 10;
+        let offset = parseInt(req.query.offset) || 0;
+
         let name = req.params.name.trim();
         let plant = await Plant.findOne({
             where: { name: name },
         });
-        let results = await plant.getMeasurements({ order: [['createdAt', 'DESC']] });
-        res.json(results);
+        let results = await plant.getMeasurements({
+            order: [['createdAt', 'DESC']],
+            limit: limit,
+            offset: offset,
+        });
+        
+        res.json({ limit: limit, offset: offset, data: results });
     } catch (e) {
         console.error(e);
         res.send(e);
