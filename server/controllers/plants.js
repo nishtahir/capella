@@ -35,8 +35,12 @@ const getPlant = async (req, res) => {
   const limit = parseInt(req.query.limit, 10) || 10;
   const offset = parseInt(req.query.offset, 10) || 0;
 
-  const name = req.params.name.trim();
-  // eslint-disable-next-line no-unused-vars
+  const { name } = req.params;
+
+  if (typeof name !== 'string') {
+    throw new BadRequestError('Please provide a valid plant name.');
+  }
+
   const plant = await Plant.findOne({ name });
   if (!plant) {
     throw new NotFoundError(`No plant with name ${name}`);
