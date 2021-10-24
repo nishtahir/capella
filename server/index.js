@@ -1,43 +1,62 @@
 /* eslint-disable no-console */
+const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
 
 const app = express();
 const port = 3000;
 
-const db = require('./models');
+// const db = require('./models');
 
-const { sequelize } = db;
-const Measurement = db.measurement;
-const Plant = db.plant;
+// const { sequelize } = db;
+// const Measurement = db.measurement;
+// const Plant = db.plant;
 
-async function testConnection() {
-  try {
-    await sequelize.authenticate();
-    console.log('Database connection established successfully.');
-  } catch (err) {
-    console.error('Unable to connect to the database:', err);
-  }
-}
+// async function testConnection() {
+//   try {
+//     await sequelize.authenticate();
+//     console.log('Database connection established successfully.');
+//   } catch (err) {
+//     console.error('Unable to connect to the database:', err);
+//   }
+// }
 
-async function createTables() {
-  try {
-    await Measurement.sync();
-    await Plant.sync();
-  } catch (err) {
-    console.error('Unable to create tables', err);
-  }
-}
+// async function createTables() {
+//   try {
+//     await Measurement.sync();
+//     await Plant.sync();
+//   } catch (err) {
+//     console.error('Unable to create tables', err);
+//   }
+// }
 
-async function connectToDatabase() {
-  await testConnection();
-  await createTables();
-}
+// async function connectToDatabase() {
+//   await testConnection();
+//   await createTables();
+// }
 
 app.use(bodyParser.urlencoded({
   extended: true,
 }));
 app.use(bodyParser.json());
+
+app.use('/static', express.static(path.join(__dirname, '../client/build/static')));
+
+app.get('/plants/', async (req, res) => {
+  try {
+    const limit = parseInt(req.query.limit, 10) || 10;
+    const offset = parseInt(req.query.offset, 10) || 0;
+
+    const results = await Plant.findAll({
+      distinct: 'plant_name',
+    });
+
+    res.json({ limit, offset, data: results });
+  } catch (e) {
+    console.error(e);
+    res.send(e);
+  }
+});
 
 app.get('/plants/', async (req, res) => {
   try {
@@ -104,9 +123,13 @@ app.post('/measurements', async (req, res) => {
   }
 });
 
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../client/build/index.html'));
+});
+
 async function startApp() {
   try {
-    await connectToDatabase();
+    // await connectToDatabase();
     app.listen(port, () => console.log(`Listening on port ${port}!`));
   } catch (e) {
     console.error('Unable to start server: ', e);
