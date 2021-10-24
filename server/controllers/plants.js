@@ -1,6 +1,9 @@
 /* eslint-disable no-console */
 const Plant = require('../models/plant');
 
+/**
+ * Route to create a new plant with the given name.
+ */
 const createPlant = async (req, res) => {
   try {
     const name = req.body.name.trim();

@@ -9,7 +9,7 @@ const plantsRouter = require('./routes/plants');
 
 app.use(express.json());
 
-// plants route
+// Attach routes
 app.use('/api/v1/plants', plantsRouter);
 
 // app.get('/plants/', async (req, res) => {
@@ -67,9 +67,11 @@ app.use('/api/v1/plants', plantsRouter);
 // });
 const port = process.env.PORT || 3000;
 
+/**
+ * Connect to DB and listen for connections
+ */
 const start = async () => {
   try {
-    // connect to DB
     await connectDB(process.env.MONGO_URI);
     app.listen(port, console.log(`Server is listening on port ${port}...`));
   } catch (error) {
