@@ -9,8 +9,8 @@ const app = express();
 
 const plantsRouter = require('./routes/plants');
 const measurementsRouter = require('./routes/measurements');
-const notFoundMiddleware = require('./middlewares/not-found');
-const errorHandlerMiddleware = require('./middlewares/error-handler');
+const notFoundMiddleware = require('./middleware/not-found');
+const errorHandlerMiddleware = require('./middleware/error-handler');
 
 app.use(express.json());
 
