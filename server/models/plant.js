@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const measurementSchema = require('./measurement');
 
 const plantSchema = new mongoose.Schema({
   name: {
@@ -9,6 +10,7 @@ const plantSchema = new mongoose.Schema({
     type: Date,
     default: Date.now(),
   },
+  moisture: [measurementSchema],
 });
 
 module.exports = mongoose.model('Plant', plantSchema);

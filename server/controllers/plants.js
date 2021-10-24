@@ -2,7 +2,7 @@
 const Plant = require('../models/plant');
 
 /**
- * Route to create a new plant with the given name.
+ * Handler to create a new plant with the given name.
  */
 const createPlant = async (req, res) => {
   try {
@@ -16,7 +16,7 @@ const createPlant = async (req, res) => {
 };
 
 /**
- * Route to get all plants.
+ * Handler to get all plants.
  */
 const getAllPlants = async (req, res) => {
   try {
@@ -33,7 +33,7 @@ const getAllPlants = async (req, res) => {
 };
 
 /**
- * Route to get a single plant data.
+ * Handler to get a single plant data.
  */
 const getPlant = async (req, res) => {
   try {

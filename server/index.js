@@ -6,27 +6,14 @@ const connectDB = require('./db/connect');
 const app = express();
 
 const plantsRouter = require('./routes/plants');
+const measurementsRouter = require('./routes/measurements');
 
 app.use(express.json());
 
 // Attach routes
 app.use('/api/v1/plants', plantsRouter);
+app.use('/api/v1/measurements', measurementsRouter);
 
-// app.post('/measurements', async (req, res) => {
-//   try {
-//     const name = req.body.name.trim();
-//     const { moisture } = req.body;
-
-//     const plant = await Plant.findOne({ where: { name } });
-//     const measurement = await plant.createMeasurement({
-//       moisture,
-//     });
-//     res.json(measurement);
-//   } catch (e) {
-//     console.error(e);
-//     res.send(e);
-//   }
-// });
 const port = process.env.PORT || 3000;
 
 /**
