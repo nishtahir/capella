@@ -12,44 +12,6 @@ app.use(express.json());
 // Attach routes
 app.use('/api/v1/plants', plantsRouter);
 
-// app.get('/plants/', async (req, res) => {
-//   try {
-//     const limit = parseInt(req.query.limit, 10) || 10;
-//     const offset = parseInt(req.query.offset, 10) || 0;
-
-//     const results = await Plant.findAll({
-//       distinct: 'plant_name',
-//     });
-
-//     res.json({ limit, offset, data: results });
-//   } catch (e) {
-//     console.error(e);
-//     res.send(e);
-//   }
-// });
-
-// app.get('/plants/:name', async (req, res) => {
-//   try {
-//     const limit = parseInt(req.query.limit, 10) || 10;
-//     const offset = parseInt(req.query.offset, 10) || 0;
-
-//     const name = req.params.name.trim();
-//     const plant = await Plant.findOne({
-//       where: { name },
-//     });
-//     const results = await plant.getMeasurements({
-//       order: [['createdAt', 'DESC']],
-//       limit,
-//       offset,
-//     });
-
-//     res.json({ limit, offset, data: results });
-//   } catch (e) {
-//     console.error(e);
-//     res.send(e);
-//   }
-// });
-
 // app.post('/measurements', async (req, res) => {
 //   try {
 //     const name = req.body.name.trim();
