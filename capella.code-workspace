@@ -1,12 +1,13 @@
 {
     "folders": [
         {
-            "name": "Hardware",
             "path": "./hardware"
         },
         {
-            "name": "Server",
             "path": "./server"
+        },
+        {
+            "path": "./client"
         }
     ],
     "settings": {},

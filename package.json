@@ -1,0 +1,20 @@
+{
+  "name": "capella",
+  "version": "1.0.0",
+  "description": "House plant monitoring to keep our greens happy.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nishtahir/capella.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nishtahir/capella/issues"
+  },
+  "homepage": "https://github.com/nishtahir/capella#readme"
+}
