@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const measurementSchema = new mongoose.Schema({
   value: {
     type: Number,
-    required: [true, 'Plant name must be provided'],
+    required: [true, 'Plant moisture value must be provided.'],
   },
   createdAt: {
     type: Date,

@@ -4,7 +4,7 @@ const measurementSchema = require('./measurement');
 const plantSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: [true, 'Plant name must be provided'],
+    required: [true, 'Plant name must be provided.'],
   },
   createdAt: {
     type: Date,
