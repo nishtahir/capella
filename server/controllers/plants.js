@@ -1,55 +1,52 @@
-/* eslint-disable no-console */
+const { StatusCodes } = require('http-status-codes');
 const Plant = require('../models/plant');
+const { BadRequestError, NotFoundError } = require('../errors');
 
 /**
  * Handler to create a new plant with the given name.
  */
 const createPlant = async (req, res) => {
-  try {
-    const name = req.body.name.trim();
-    const plant = await Plant.create({ name });
-    res.status(201).json({ plant });
-  } catch (e) {
-    console.error(e);
-    res.send(e);
+  const { name } = req.body;
+
+  if (typeof name !== 'string') {
+    throw new BadRequestError('Please provide a valid plant name.');
   }
+  const plant = await Plant.create({ name });
+
+  res.status(StatusCodes.CREATED).json({ plant });
 };
 
 /**
  * Handler to get all plants.
  */
 const getAllPlants = async (req, res) => {
-  try {
-    const limit = parseInt(req.query.limit, 10) || 10;
-    const offset = parseInt(req.query.offset, 10) || 0;
+  const limit = parseInt(req.query.limit, 10) || 10;
+  const offset = parseInt(req.query.offset, 10) || 0;
 
-    const plants = await Plant.find({}).limit(limit).skip(offset);
+  const plants = await Plant.find({}).limit(limit).skip(offset);
 
-    res.status(200).json({ limit, offset, data: plants });
-  } catch (e) {
-    console.error(e);
-    res.send(e);
-  }
+  res.status(StatusCodes.OK).json({ limit, offset, data: plants });
 };
 
 /**
  * Handler to get a single plant data.
  */
 const getPlant = async (req, res) => {
-  try {
-    const limit = parseInt(req.query.limit, 10) || 10;
-    const offset = parseInt(req.query.offset, 10) || 0;
+  const limit = parseInt(req.query.limit, 10) || 10;
+  const offset = parseInt(req.query.offset, 10) || 0;
 
-    const name = req.params.name.trim();
-    // eslint-disable-next-line no-unused-vars
-    const plant = await Plant.findOne({ name });
-    const measurements = [];
+  const { name } = req.params;
 
-    res.status(200).json({ limit, offset, data: measurements });
-  } catch (e) {
-    console.error(e);
-    res.send(e);
+  if (typeof name !== 'string') {
+    throw new BadRequestError('Please provide a valid plant name.');
   }
+
+  const plant = await Plant.findOne({ name });
+  if (!plant) {
+    throw new NotFoundError(`No plant with name ${name}`);
+  }
+
+  res.status(StatusCodes.OK).json({ limit, offset, data: plant });
 };
 
 module.exports = {
