@@ -1,0 +1,19 @@
+{
+    "folders": [
+        {
+            "name": "Hardware",
+            "path": "./hardware"
+        },
+        {
+            "name": "Server",
+            "path": "./server"
+        }
+    ],
+    "settings": {},
+    "extensions": {
+        "recommendations": [
+            "dbaeumer.vscode-eslint",
+            "platformio.platformio-ide"
+        ]
+    }
+}
