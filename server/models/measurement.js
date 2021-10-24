@@ -1,11 +1,15 @@
 /* eslint-disable func-names */
-module.exports = (sequelize, DataTypes) => {
-  const Measurement = sequelize.define('Measurement', {
-    moisture: DataTypes.INTEGER,
-  }, {});
-  // eslint-disable-next-line no-unused-vars
-  Measurement.associate = function (models) {
-    // associations can be defined here
-  };
-  return Measurement;
-};
+const mongoose = require('mongoose');
+
+const measurementSchema = new mongoose.Schema({
+  value: {
+    type: Number,
+    required: [true, 'Plant name must be provided'],
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now(),
+  },
+});
+
+module.exports = measurementSchema;
