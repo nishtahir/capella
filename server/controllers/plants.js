@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 const { StatusCodes } = require('http-status-codes');
 const Plant = require('../models/plant');
 const { BadRequestError, NotFoundError } = require('../errors');
