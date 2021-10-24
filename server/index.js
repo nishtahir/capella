@@ -1,115 +1,116 @@
+/* eslint-disable no-console */
 const express = require('express');
-var bodyParser = require('body-parser');
+const bodyParser = require('body-parser');
 
 const app = express();
 const port = 3000;
 
 const db = require('./models');
-const sequelize = db.sequelize;
+
+const { sequelize } = db;
 const Measurement = db.measurement;
 const Plant = db.plant;
 
-async function connectToDatabase() {
-    await testConnection();
-    await createTables();
-}
-
 async function testConnection() {
-    try {
-        await sequelize.authenticate();
-        console.log('Database connection established successfully.');
-    } catch (err) {
-        console.error('Unable to connect to the database:', err);
-    }
+  try {
+    await sequelize.authenticate();
+    console.log('Database connection established successfully.');
+  } catch (err) {
+    console.error('Unable to connect to the database:', err);
+  }
 }
 
 async function createTables() {
-    try {
-        await Measurement.sync();
-        await Plant.sync();
-    } catch (err) {
-        console.error('Unable to create tables', err);
-    }
+  try {
+    await Measurement.sync();
+    await Plant.sync();
+  } catch (err) {
+    console.error('Unable to create tables', err);
+  }
+}
+
+async function connectToDatabase() {
+  await testConnection();
+  await createTables();
 }
 
 app.use(bodyParser.urlencoded({
-    extended: true
+  extended: true,
 }));
 app.use(bodyParser.json());
 
 app.get('/plants/', async (req, res) => {
-    try {
-        let limit = parseInt(req.query.limit) || 10;
-        let offset = parseInt(req.query.offset) || 0;
+  try {
+    const limit = parseInt(req.query.limit, 10) || 10;
+    const offset = parseInt(req.query.offset, 10) || 0;
 
-        let results = await Plant.findAll({
-            distinct: 'plant_name'
-        });
+    const results = await Plant.findAll({
+      distinct: 'plant_name',
+    });
 
-        res.json({ limit: limit, offset: offset, data: results });
-    } catch (e) {
-        console.error(e);
-        res.send(e);
-    }
+    res.json({ limit, offset, data: results });
+  } catch (e) {
+    console.error(e);
+    res.send(e);
+  }
 });
 
 app.get('/plants/:name', async (req, res) => {
-    try {
-        let limit = parseInt(req.query.limit) || 10;
-        let offset = parseInt(req.query.offset) || 0;
+  try {
+    const limit = parseInt(req.query.limit, 10) || 10;
+    const offset = parseInt(req.query.offset, 10) || 0;
 
-        let name = req.params.name.trim();
-        let plant = await Plant.findOne({
-            where: { name: name },
-        });
-        let results = await plant.getMeasurements({
-            order: [['createdAt', 'DESC']],
-            limit: limit,
-            offset: offset,
-        });
-        
-        res.json({ limit: limit, offset: offset, data: results });
-    } catch (e) {
-        console.error(e);
-        res.send(e);
-    }
+    const name = req.params.name.trim();
+    const plant = await Plant.findOne({
+      where: { name },
+    });
+    const results = await plant.getMeasurements({
+      order: [['createdAt', 'DESC']],
+      limit,
+      offset,
+    });
+
+    res.json({ limit, offset, data: results });
+  } catch (e) {
+    console.error(e);
+    res.send(e);
+  }
 });
 
 app.post('/plants', async (req, res) => {
-    try {
-        let name = req.body.name.trim();
-        let plant = await Plant.create({ name: name });
-        res.json(plant);
-    } catch (e) {
-        console.error(e);
-        res.send(e);
-    }
+  try {
+    const name = req.body.name.trim();
+    const plant = await Plant.create({ name });
+    res.json(plant);
+  } catch (e) {
+    console.error(e);
+    res.send(e);
+  }
 });
 
 app.post('/measurements', async (req, res) => {
-    try {
-        let name = req.body.name.trim();
-        let moisture = req.body.moisture;
+  try {
+    const name = req.body.name.trim();
+    const { moisture } = req.body;
 
-        let plant = await Plant.findOne({ where: { name: name } });
-        let measurement = await plant.createMeasurement({
-            moisture: moisture
-        });
-        res.json(measurement);
-    } catch (e) {
-        console.error(e);
-        res.send(e);
-    }
-
+    const plant = await Plant.findOne({ where: { name } });
+    const measurement = await plant.createMeasurement({
+      moisture,
+    });
+    res.json(measurement);
+  } catch (e) {
+    console.error(e);
+    res.send(e);
+  }
 });
 
 async function startApp() {
-    try {
-        await connectToDatabase();
-        app.listen(port, () => console.log(`Listening on port ${port}!`))
-    } catch (e) {
-        console.error('Unable to start server: ', e);
-    }
+  try {
+    await connectToDatabase();
+    app.listen(port, () => console.log(`Listening on port ${port}!`));
+  } catch (e) {
+    console.error('Unable to start server: ', e);
+  }
 }
 
 startApp();
