@@ -1,7 +1,7 @@
-const mongoose = require('mongoose');
-const measurementSchema = require('./measurement');
+import { Schema, model } from 'mongoose';
+import measurementSchema from './measurement.js';
 
-const plantSchema = new mongoose.Schema({
+const plantSchema = new Schema({
   name: {
     type: String,
     required: [true, 'Plant name must be provided.'],
@@ -13,4 +13,4 @@ const plantSchema = new mongoose.Schema({
   moisture: [measurementSchema],
 });
 
-module.exports = mongoose.model('Plant', plantSchema);
+export default model('Plant', plantSchema);

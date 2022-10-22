@@ -3,6 +3,7 @@
   "version": "1.0.2",
   "description": "House plant monitoring to keep our greens happy.",
   "main": "index.js",
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "https://github.com/nishtahir/capella/tree/master/server"
