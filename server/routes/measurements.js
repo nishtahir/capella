@@ -1,9 +1,8 @@
-const express = require('express');
+import { Router } from 'express';
+import { postMeasurement } from '../controllers/measurements.js';
 
-const router = express.Router();
-
-const { postMeasurement } = require('../controllers/measurements');
+const router = Router();
 
 router.route('/').post(postMeasurement);
 
-module.exports = router;
+export default router;

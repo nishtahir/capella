@@ -3,6 +3,7 @@
   "version": "1.0.2",
   "description": "House plant monitoring to keep our greens happy.",
   "main": "index.js",
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "https://github.com/nishtahir/capella/tree/master/server"
@@ -21,9 +22,9 @@
     "mongoose": "^6.0.12"
   },
   "devDependencies": {
-    "eslint": "^8.26.0",
-    "eslint-config-airbnb": "^19.0.4",
-    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint": "^7.32.0",
+    "eslint-config-airbnb": "^18.2.1",
+    "eslint-config-airbnb-base": "^14.2.1",
     "eslint-plugin-import": "^2.25.2"
   }
 }

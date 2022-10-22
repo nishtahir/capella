@@ -1,7 +1,7 @@
 /* eslint-disable func-names */
-const mongoose = require('mongoose');
+import { Schema } from 'mongoose';
 
-const measurementSchema = new mongoose.Schema({
+const measurementSchema = new Schema({
   value: {
     type: Number,
     required: [true, 'Plant moisture value must be provided.'],
@@ -12,4 +12,4 @@ const measurementSchema = new mongoose.Schema({
   },
 });
 
-module.exports = measurementSchema;
+export default measurementSchema;

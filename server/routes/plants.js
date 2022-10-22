@@ -1,10 +1,8 @@
-const express = require('express');
+import { Router } from 'express';
+import { createPlant, getAllPlants, getPlant } from '../controllers/plants.js';
 
-const router = express.Router();
-
-const { createPlant, getAllPlants, getPlant } = require('../controllers/plants');
-
+const router = Router();
 router.route('/').post(createPlant).get(getAllPlants);
 router.route('/:name').get(getPlant);
 
-module.exports = router;
+export default router;

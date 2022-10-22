@@ -1,18 +1,17 @@
 /* eslint-disable no-console */
-require('dotenv').config();
-require('express-async-errors');
+import 'express-async-errors';
+import express, { json } from 'express';
+import dotenv from 'dotenv';
+import connectDB from './db/connect.js';
+import plantsRouter from './routes/plants.js';
+import measurementsRouter from './routes/measurements.js';
+import notFoundMiddleware from './middleware/not-found.js';
+import errorHandlerMiddleware from './middleware/error-handler.js';
 
-const express = require('express');
-const connectDB = require('./db/connect');
-
+dotenv.config();
 const app = express();
 
-const plantsRouter = require('./routes/plants');
-const measurementsRouter = require('./routes/measurements');
-const notFoundMiddleware = require('./middleware/not-found');
-const errorHandlerMiddleware = require('./middleware/error-handler');
-
-app.use(express.json());
+app.use(json());
 
 // Attach routes
 app.use('/api/v1/plants', plantsRouter);
@@ -28,7 +27,7 @@ const port = process.env.PORT || 3000;
  */
 const start = async () => {
   try {
-    await connectDB(process.env.MONGO_URI);
+    connectDB(process.env.MONGO_URI);
     app.listen(port, console.log(`Server is listening on port ${port}...`));
   } catch (error) {
     console.log(error);
